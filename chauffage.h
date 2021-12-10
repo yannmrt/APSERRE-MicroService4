@@ -11,9 +11,9 @@ public:
     int status;
 
 public slots:
-    start();
-    stop();
-    reset();
+    void start();
+    void stop();
+    void reset();
 };
 
 #endif // CHAUFFAGE_H

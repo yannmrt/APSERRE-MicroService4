@@ -11,9 +11,9 @@ public:
     int status;
 
 public slots:
-    open();
-    close();
-    reset();
+    void open();
+    void close();
+    void reset();
 };
 
 #endif // VERRINVELUX_H

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <qdebug.h>
+#include <QTcpSocket>
 
 class brumisation : public QObject
 {
@@ -11,12 +12,12 @@ class brumisation : public QObject
 public:
     explicit brumisation(QObject *parent = nullptr);
     int status;
+    QTcpSocket * socket;
 
 public slots:
     void start();
     void stop();
     void reset();
-    void getStatus();
 };
 
 #endif // BRUMISATION_H

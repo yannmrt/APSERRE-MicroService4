@@ -7,7 +7,6 @@
 // On inclus la lib nécessaires pour le micro services
 #include <QtMqtt/QtMqtt>
 #include <QtCore>
-#include <QTcpSocket>
 
 // On inclus les classes de gestion
 #include "arrosage.h"
@@ -31,19 +30,16 @@ private:
     Ui::MicroService4 *ui;
     QMqttClient *m_client;
 
-    // Socket
-    QTcpSocket * socket;
-
     // Class
     arrosage *ar;
     brumisation *br;
-
     verrinVelux *vr;
     chauffage *ch;
 
 public slots:
-    void receiveMessage();
-    void brokerDisconnected();
+    void onMqttConnected();
+    void onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic);
+    void onBrokerDisconnected();
 };
 
 #endif // MICROSERVICE4_H

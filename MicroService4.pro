@@ -32,14 +32,16 @@ SOURCES += \
     arrosage.cpp \
     chauffage.cpp \
     verrinvelux.cpp \
-    brumisation.cpp
+    brumisation.cpp \
+    qmodbustcpclient.cpp
 
 HEADERS += \
         microservice4.h \
     arrosage.h \
     chauffage.h \
     verrinvelux.h \
-    brumisation.h
+    brumisation.h \
+    qmodbustcpclient.h
 
 FORMS += \
         microservice4.ui

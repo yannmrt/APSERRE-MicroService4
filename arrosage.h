@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QTcpSocket>
 
 class arrosage
 {
@@ -10,6 +11,7 @@ private:
     int status;
 public:
     arrosage();
+
 public slots:
     void start();
     void stop();

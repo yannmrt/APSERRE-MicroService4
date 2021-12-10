@@ -2,8 +2,8 @@
 #include "ui_microservice4.h"
 
 // Configuration du serveur MQTT
-#define HOSTNAME "192.168.0.0"
-#define PORT 1178
+#define HOSTNAME "192.168.65.104"
+#define PORT 1883
 
 MicroService4::MicroService4(QWidget *parent) :
     QMainWindow(parent),
@@ -20,27 +20,67 @@ MicroService4::MicroService4(QWidget *parent) :
     m_client->setHostname(HOSTNAME);
     m_client->setPort(PORT);
 
-    // On définie les signaux et on les rediriges vers les slots
-    QObject::connect(m_client, SIGNAL(messageReceived()), this, SLOT(receiveMessage()));
-    QObject::connect(m_client, SIGNAL(disconnected()), this, SLOT(brokerDisconnected()));
+    QObject::connect(m_client, SIGNAL(connect()), this, SLOT(onMqttConnected()));
 
+    m_client->connectToHost();
 }
 
-void MicroService4::receiveMessage()
+void MicroService4::onMqttConnected()
 {
-    // Initialisation du socket
-    socket = new QTcpSocket(this);
-        QObject::connect(socket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
-        QObject::connect(socket, SIGNAL(disconnected()), this, SLOT(onSocketDisonnected()));
-        QObject::connect(socket, SIGNAL(readyRead()), this, SLOT(messagerecu()));
-        socket->connectToHost( "192.168.64.148", 178);
+    qDebug() << "Connexion au broker MQTT réussie.";
 
-    // On alloue la mémoire pour les fonctions
-    br = new brumisation();
-    ar = new arrosage();
+    // On subscribe le topic arrosage
+    m_client->subscribe(QMqttTopicFilter("watering"));
+
+    // On subscribe le topic brumisation
+    m_client->subscribe(QMqttTopicFilter("misting"));
+
+    // On subscribe le topic chauffage
+    m_client->subscribe(QMqttTopicFilter("heating"));
+
+    // On subscribe le topic velux
+    m_client->subscribe(QMqttTopicFilter("vasistas"));
+
+    // Si on reçois un message sur l'un des topic alors on envoi vers la fonctio onMqttreceiveMessage
+    QObject::connect(m_client, &QMqttClient::messageReceived, this, &MicroService4::onMqttReceiveMessage);
 }
 
-void MicroService4::brokerDisconnected()
+void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic)
+{
+    if(topic.name() == "misting") {
+        if(message == "start_misting") {
+            br->start();
+        } else if(message == "stop_misting") {
+            br->stop();
+        }
+    }
+
+    if(topic.name() == "watering") {
+        if(message == "start_watering") {
+            ar->start();
+        } else if(message == "stop_watering") {
+            ar->stop();
+        }
+    }
+
+    if(topic.name() == "heating") {
+        if(message == "start_heating") {
+
+        } else if(message == "stop_heating") {
+
+        }
+    }
+
+    if(topic.name() == "vasistas") {
+        if(message == "start_vasistas") {
+
+        } else if(message == "stop_vasistas") {
+
+        }
+    }
+}
+
+void MicroService4::onBrokerDisconnected()
 {
     qDebug() << "Broker MQTT perdu.";
 }
