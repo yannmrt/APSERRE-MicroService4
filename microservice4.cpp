@@ -47,7 +47,7 @@ void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttT
 {
     // On instancie les classe modbus
     mbus_tcw = new QModbusTcpClient("192.168.65.8", 502, this); // Carte TCW
-    mbus_poseidon = new QModbusTcpClient("192.168.64.58", 502, this); // Carte Poseidon
+    // mbus_poseidon = new QModbusTcpClient("192.168.64.58", 502, this); // Carte Poseidon
 
 
     if(topic.name() == "misting") {
@@ -68,17 +68,17 @@ void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttT
 
     if(topic.name() == "heating") {
         if(message == "start_heating") {
-            ch->start(mbus_poseidon);
+            ch->start(mbus_tcw);
         } else if(message == "stop_heating") {
-            ch->stop(mbus_poseidon);
+            ch->stop(mbus_tcw);
         }
     }
 
     if(topic.name() == "vasistas") {
         if(message == "start_vasistas") {
-            vr->open(mbus_poseidon);
+            vr->open(mbus_tcw);
         } else if(message == "stop_vasistas") {
-            vr->close(mbus_poseidon);
+            vr->close(mbus_tcw);
         }
     }
 }

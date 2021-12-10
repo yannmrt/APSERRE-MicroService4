@@ -13,8 +13,8 @@ public:
     int status;
 
 public slots:
-    void start(QModbusTcpClient * mbus_poseidon);
-    void stop(QModbusTcpClient * mbus_poseidon);
+    void start(QModbusTcpClient * mbus_tcw);
+    void stop(QModbusTcpClient * mbus_tcw);
 };
 
 #endif // CHAUFFAGE_H

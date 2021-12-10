@@ -13,8 +13,8 @@ public:
     int status;
 
 public slots:
-    void open(QModbusTcpClient * mbus_poseidon);
-    void close(QModbusTcpClient * mbus_poseidon);
+    void open(QModbusTcpClient * mbus_tcw);
+    void close(QModbusTcpClient * mbus_tcw);
 };
 
 #endif // VERRINVELUX_H
