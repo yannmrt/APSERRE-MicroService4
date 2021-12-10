@@ -1,10 +1,6 @@
 #include "microservice4.h"
 #include "ui_microservice4.h"
 
-// Configuration du serveur MQTT
-#define HOSTNAME "192.168.65.104"
-#define PORT 1883
-
 MicroService4::MicroService4(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MicroService4)
@@ -14,13 +10,15 @@ MicroService4::MicroService4(QWidget *parent) :
     // On définie la mémoire pour nos classes arrosage et brumisation
     ar = new arrosage();
     br = new brumisation();
+    ch = new chauffage();
+    vr = new verrinVelux();
 
     // Connexion au serveur MQTT
     m_client = new QMqttClient(this);
-    m_client->setHostname(HOSTNAME);
-    m_client->setPort(PORT);
+    m_client->setHostname("192.168.65.104");
+    m_client->setPort(1883);
 
-    QObject::connect(m_client, SIGNAL(connect()), this, SLOT(onMqttConnected()));
+    QObject::connect(m_client, SIGNAL(connected()), this, SLOT(onMqttConnected()));
 
     m_client->connectToHost();
 }
@@ -47,35 +45,40 @@ void MicroService4::onMqttConnected()
 
 void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic)
 {
+    // On instancie les classe modbus
+    mbus_tcw = new QModbusTcpClient("192.168.65.8", 502, this); // Carte TCW
+    mbus_poseidon = new QModbusTcpClient("192.168.64.58", 502, this); // Carte Poseidon
+
+
     if(topic.name() == "misting") {
         if(message == "start_misting") {
-            br->start();
+            br->start(mbus_tcw);
         } else if(message == "stop_misting") {
-            br->stop();
+            br->stop(mbus_tcw);
         }
     }
 
     if(topic.name() == "watering") {
         if(message == "start_watering") {
-            ar->start();
+            ar->start(mbus_tcw);
         } else if(message == "stop_watering") {
-            ar->stop();
+            ar->stop(mbus_tcw);
         }
     }
 
     if(topic.name() == "heating") {
         if(message == "start_heating") {
-
+            ch->start(mbus_poseidon);
         } else if(message == "stop_heating") {
-
+            ch->stop(mbus_poseidon);
         }
     }
 
     if(topic.name() == "vasistas") {
         if(message == "start_vasistas") {
-
+            vr->open(mbus_poseidon);
         } else if(message == "stop_vasistas") {
-
+            vr->close(mbus_poseidon);
         }
     }
 }

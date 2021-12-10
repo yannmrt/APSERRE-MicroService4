@@ -5,7 +5,7 @@ chauffage::chauffage()
     this->status = 0;
 }
 
-void chauffage::start()
+void chauffage::start(QModbusTcpClient * mbus_poseidon)
 {
     if(this->status == 0) {
         // On lance la débrumisation
@@ -14,7 +14,7 @@ void chauffage::start()
     }
 }
 
-void chauffage::stop()
+void chauffage::stop(QModbusTcpClient * mbus_poseidon)
 {
     if(this->status == 1) {
         // On arrête la brumisation
@@ -22,9 +22,3 @@ void chauffage::stop()
         qDebug() << "Le chauffage est déjà eteind.";
     }
 }
-
-void chauffage::reset()
-{
-
-}
-

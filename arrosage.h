@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QTcpSocket>
 
+#include "qmodbustcpclient.h"
+
 class arrosage
 {
 private:
@@ -13,9 +15,8 @@ public:
     arrosage();
 
 public slots:
-    void start();
-    void stop();
-    void reset();
+    void start(QModbusTcpClient * mbus_tcw);
+    void stop(QModbusTcpClient * mbus_tcw);
 };
 
 #endif // ARROSAGE_H

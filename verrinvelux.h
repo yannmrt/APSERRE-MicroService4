@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QDebug>
 
+#include "qmodbustcpclient.h"
+
 class verrinVelux
 {
 public:
@@ -11,9 +13,8 @@ public:
     int status;
 
 public slots:
-    void open();
-    void close();
-    void reset();
+    void open(QModbusTcpClient * mbus_poseidon);
+    void close(QModbusTcpClient * mbus_poseidon);
 };
 
 #endif // VERRINVELUX_H

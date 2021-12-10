@@ -14,6 +14,9 @@
 #include "verrinvelux.h"
 #include "chauffage.h"
 
+// On inclus la classe nécessaire pour communiquer avec les cartes
+#include "qmodbustcpclient.h"
+
 namespace Ui {
 class MicroService4;
 }
@@ -35,6 +38,10 @@ private:
     brumisation *br;
     verrinVelux *vr;
     chauffage *ch;
+
+    // Com modbus
+    QModbusTcpClient *mbus_tcw;
+    QModbusTcpClient *mbus_poseidon;
 
 public slots:
     void onMqttConnected();

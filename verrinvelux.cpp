@@ -5,7 +5,7 @@ verrinVelux::verrinVelux()
     this->status = 0;
 }
 
-void verrinVelux::open()
+void verrinVelux::open(QModbusTcpClient * mbus_poseidon)
 {
     if(this->status == 0) {
         // On lance la débrumisation
@@ -14,16 +14,11 @@ void verrinVelux::open()
     }
 }
 
-void verrinVelux::close()
+void verrinVelux::close(QModbusTcpClient * mbus_poseidon)
 {
     if(this->status == 1) {
         // On arrête la brumisation
     } else {
         qDebug() << "Le velux est déjà fermé.";
     }
-}
-
-void verrinVelux::reset()
-{
-
 }

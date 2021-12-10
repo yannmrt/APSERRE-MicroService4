@@ -5,7 +5,7 @@ brumisation::brumisation(QObject *parent) : QObject(parent)
     this->status = 0;
 }
 
-void brumisation::start()
+void brumisation::start(QModbusTcpClient * mbus_tcw)
 {
     if(this->status == 0) {
         // On lance la débrumisation
@@ -14,16 +14,11 @@ void brumisation::start()
     }
 }
 
-void brumisation::stop()
+void brumisation::stop(QModbusTcpClient * mbus_tcw)
 {
     if(this->status == 1) {
         // On arrête la brumisation
     } else {
         qDebug() << "La brumiastion est déjà en état arrêtée.";
     }
-}
-
-void brumisation::reset()
-{
-
 }

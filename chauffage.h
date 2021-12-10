@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QDebug>
 
+#include "qmodbustcpclient.h"
+
 class chauffage
 {
 public:
@@ -11,9 +13,8 @@ public:
     int status;
 
 public slots:
-    void start();
-    void stop();
-    void reset();
+    void start(QModbusTcpClient * mbus_poseidon);
+    void stop(QModbusTcpClient * mbus_poseidon);
 };
 
 #endif // CHAUFFAGE_H
