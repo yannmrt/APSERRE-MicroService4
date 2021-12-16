@@ -253,17 +253,20 @@ void PresetMultipleRegisterFC16Request::decodeAndCallback(QVector<unsigned char>
 }
 
 // ModbusClient :
-QModbusTcpClient::QModbusTcpClient(QString host, quint16 port, QObject *parent) : QTcpSocket(parent)
+QModbusTcpClient::QModbusTcpClient(QString host, quint16 port, QObject *parent, void * userObj) : QTcpSocket(parent)
 {
     this->transactionId = 1;
     this->host = host;
     this->port = port;
     this->unitId = 0;
+    this->userObj = userObj;
+    QObject::connect(this, SIGNAL(connected()), this, SLOT(tcpSocketConnected()));
     QObject::connect(this, SIGNAL(readyRead()), this, SLOT(onDataRecv()));
 }
 
 void QModbusTcpClient::connectToHost()
 {
+
     QTcpSocket::connectToHost(host, port);
 }
 
@@ -538,4 +541,9 @@ void QModbusTcpClient::presetMultipleRegistersFC16(quint16 startAddress, QVector
         flush();
         delete trame;
     }
+}
+
+void QModbusTcpClient::tcpSocketConnected()
+{
+    onConnected(userObj);
 }

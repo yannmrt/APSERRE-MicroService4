@@ -21,6 +21,12 @@ namespace Ui {
 class MicroService4;
 }
 
+struct MessageData
+{
+    QString topic;
+    QString message;
+};
+
 class MicroService4 : public QMainWindow
 {
     Q_OBJECT
@@ -47,6 +53,9 @@ public slots:
     void onMqttConnected();
     void onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic);
     void onBrokerDisconnected();
+
+    void onModbusConnected(void * userObj);
+    void onForceSingleCoilSentence(bool writeSuccess, quint16 coilAddress, bool value);
 };
 
 #endif // MICROSERVICE4_H

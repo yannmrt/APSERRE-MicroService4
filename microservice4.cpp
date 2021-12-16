@@ -43,44 +43,69 @@ void MicroService4::onMqttConnected()
     QObject::connect(m_client, &QMqttClient::messageReceived, this, &MicroService4::onMqttReceiveMessage);
 }
 
-void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic)
+void MicroService4::onModbusConnected(void * userObj)
 {
-    // On instancie les classe modbus
-    mbus_tcw = new QModbusTcpClient("192.168.65.8", 502, this); // Carte TCW
-    // mbus_poseidon = new QModbusTcpClient("192.168.64.58", 502, this); // Carte Poseidon
+    MessageData * data = (MessageData*)userObj;
 
+    QModbusTcpClient * mbus_tcw = (QModbusTcpClient*)sender();
 
-    if(topic.name() == "misting") {
-        if(message == "start_misting") {
+    if(data->topic == "misting") {
+        if(data->message == "start_misting") {
             br->start(mbus_tcw);
-        } else if(message == "stop_misting") {
+        } else if(data->message == "stop_misting") {
             br->stop(mbus_tcw);
         }
     }
 
-    if(topic.name() == "watering") {
-        if(message == "start_watering") {
+    if(data->topic == "watering") {
+        if(data->message == "start_watering") {
             ar->start(mbus_tcw);
-        } else if(message == "stop_watering") {
+        } else if(data->message == "stop_watering") {
             ar->stop(mbus_tcw);
         }
     }
 
-    if(topic.name() == "heating") {
-        if(message == "start_heating") {
+    if(data->topic == "heating") {
+        if(data->message == "start_heating") {
             ch->start(mbus_tcw);
-        } else if(message == "stop_heating") {
+        } else if(data->message == "stop_heating") {
             ch->stop(mbus_tcw);
         }
     }
 
-    if(topic.name() == "vasistas") {
-        if(message == "start_vasistas") {
+    if(data->topic == "vasistas") {
+        if(data->message == "start_vasistas") {
             vr->open(mbus_tcw);
-        } else if(message == "stop_vasistas") {
+        } else if(data->message == "stop_vasistas") {
             vr->close(mbus_tcw);
         }
     }
+
+
+}
+
+void MicroService4::onMqttReceiveMessage(const QByteArray &message, const QMqttTopicName &topic)
+{
+    MessageData * data = new MessageData();
+    data->topic = topic.name();
+    data->message = QString(message);
+
+    // On instancie les classe modbus
+    mbus_tcw = new QModbusTcpClient("192.168.65.19", 502, this, data); // Carte TCW
+    // mbus_poseidon = new QModbusTcpClient("192.168.64.58", 502, this); // Carte Poseidon
+    QObject::connect(mbus_tcw, &QModbusTcpClient::onConnected, this, &MicroService4::onModbusConnected);
+    QObject::connect(mbus_tcw, &QModbusTcpClient::onForceSingleCoilSentence, this, &MicroService4::onForceSingleCoilSentence);
+
+    mbus_tcw->connectToHost();
+
+
+}
+
+void MicroService4::onForceSingleCoilSentence(bool writeSuccess, quint16 coilAddress, bool value)
+{
+    QModbusTcpClient * client = (QModbusTcpClient*)sender();
+    client->disconnectFromHost();
+    sender()->deleteLater();
 }
 
 void MicroService4::onBrokerDisconnected()

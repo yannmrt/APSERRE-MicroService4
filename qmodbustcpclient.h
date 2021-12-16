@@ -177,8 +177,10 @@ class QModbusTcpClient : public QTcpSocket
 
     void processModbusSentence();
 
+    void * userObj;
+
 public:
-    explicit QModbusTcpClient(QString host, quint16 port, QObject *parent = nullptr);
+    explicit QModbusTcpClient(QString host, quint16 port, QObject *parent = nullptr, void * userObj = nullptr);
     virtual void connectToHost();
     void writeSingleWordFC6(quint16 wordAddress, quint16 wordValue);
     void readMultipleHoldingRegistersFC3(quint16 startAddress, quint16 nbWord);
@@ -214,8 +216,11 @@ signals:
     // FC 16 (0x10)
     void onPresetMultipleRegistersSentence(bool writeSuccess, quint16 startAddress, QVector<quint16> valuesWriteRequested, quint16 nbValueWritten);
 
-public slots:
+    void onConnected(void * userObj);
+
+private slots:
     void onDataRecv();
+    void tcpSocketConnected();
 
 };
 
